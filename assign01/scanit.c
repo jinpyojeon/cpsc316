@@ -17,13 +17,13 @@ const char * parseModeStr(ParseMode p) {
 
 bool isOperator(char c) {
 	
-	char operators[16] = {'&', '=', '!', ':', ',',
+	char operators[17] = {'&', '=', '!', ':', ',',
 						'.', '>', '<', '[', ']', 
 						'(', ')', '+', '_', '/', 
-						'*'	};
+						'*', ';'};
 	
 	int i = 0;
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < sizeof(operators); i++) {
 		if (operators[i] == c) return true;
 	}
 	return false;
@@ -36,6 +36,14 @@ bool isIdentifier(char c) {
 void resetToken(char * tokenArr, size_t arrSize, int* tokenIndex){
 	memset(tokenArr, 0, sizeof(arrSize));
 	*tokenIndex = 0;
+}
+
+bool findChar(char * tokenArr, size_t tokenSize, char c){
+	int i = 0;
+	for (i = 0; i < tokenSize; i++) {
+		if (tokenArr[i] == c) return true;
+	}
+	return false;
 }
 
 
@@ -61,21 +69,33 @@ int main(void){
 		
 			c = lineBuf[i];
 			
+			if (c == '\n') continue;	
 			// fprintf(stderr, "%c", c);
 			if (!isOperator(c) && !isIdentifier(c) && 
-			    c != '"' && c != ' ' && c != '\0' && 
+			    c != '"' && c != ' ' && c != '\0' && c != '\\' &&
+				c != ';' &&
 				currMode != P_STRING) {
+				if (tokenIndex != 0) {
+					fprintf(stderr, format, lineIndex, 
+						parseModeStr(currMode),tokenArr);
+					currMode = P_NONE;
+					memset(tokenArr, 0, sizeof(tokenArr));
+					tokenIndex = 0;
+				}
 				fprintf(stderr, errorFormat, lineIndex, c);
 			}
 			
 			if (currMode == P_NONE) {
+				if (isdigit(c)) {
+					currMode = P_INT;
+				}
 				if (isIdentifier(c)) {
 					tokenArr[tokenIndex++] = c;
 					currMode = P_IDENTIFIER;
 				} else if (isOperator(c)) {
 					tokenArr[tokenIndex++] = c;
 					currMode = P_OPERATOR;
-				} else if (c == "\"") {
+				} else if (c == '"') {
 					currMode = P_STRING;
 				}
 			}
@@ -89,10 +109,71 @@ int main(void){
 					memset(tokenArr, 0, sizeof(tokenArr));
 					tokenIndex = 0;
 				}
+			} 
+			else if (currMode == P_OPERATOR) {
+				if (findChar(tokenArr, tokenIndex, '.') &&
+						isdigit(c)) {
+					tokenArr[tokenIndex++] = c;
+					currMode = P_FLOAT;
+				} else {
+					fprintf(stderr, format, lineIndex, 
+							parseModeStr(currMode),tokenArr);
+					currMode = P_NONE;
+					memset(tokenArr, 0, sizeof(tokenArr));
+					tokenIndex = 0;
+				}
+			}
+			else if (currMode == P_STRING) {
+				if (c == '\\') {
+					i++;
+				}
+				else if (c == '"') {
+					fprintf(stderr, format, lineIndex, 
+							parseModeStr(currMode),tokenArr);
+					currMode = P_NONE;
+					memset(tokenArr, 0, sizeof(tokenArr));
+					tokenIndex = 0;
+				} else {
+					tokenArr[tokenIndex++] = c;
+				}
+			}
+			else if (currMode == P_INT) {
+				if (isdigit(c)) {
+					tokenArr[tokenIndex++] = c;
+				}
+				else if (c == '.') {
+					tokenArr[tokenIndex++] = c;
+					currMode = P_FLOAT;
+				} else {
+					fprintf(stderr, format, lineIndex, 
+							parseModeStr(currMode),tokenArr);
+					currMode = P_NONE;
+					memset(tokenArr, 0, sizeof(tokenArr));
+					tokenIndex = 0;
+				} 
+			}
+			else if (currMode == P_FLOAT){
+				bool secondDot = c == '.' && 
+									findChar(tokenArr, tokenIndex, '.');
+				if (isdigit(c)) {
+					tokenArr[tokenIndex++] = c;
+				} else if(secondDot){
+					fprintf(stderr, format, lineIndex, 
+						parseModeStr(currMode),tokenArr);
+					currMode = P_OPERATOR;
+					memset(tokenArr, 0, sizeof(tokenArr));
+					tokenIndex = 0;
+					tokenArr[tokenIndex++] = c;			
+				} else {
+					fprintf(stderr, format, lineIndex, 
+							parseModeStr(currMode),tokenArr);
+					currMode = P_NONE;
+					memset(tokenArr, 0, sizeof(tokenArr));
+					tokenIndex = 0;
+				}
 			}
 			else {
 				if (c == ' ' || c == '\n') {
-					tokenArr[tokenIndex] = '\0';
 					fprintf(stderr, format, lineIndex, 
 							parseModeStr(currMode),tokenArr);
 					currMode = P_NONE;
@@ -103,16 +184,6 @@ int main(void){
 					tokenArr[tokenIndex++] = c;
 				}
 			}
-			// else if (currMode == ) {
-			//	if (c == ' ') {}
-			//}
-			//else if 
-			//
-			//}	
-			//else if (c == '\') {
-			//
-			//}
-
 		}
 		
 		// free(lineBuf);
@@ -122,7 +193,4 @@ int main(void){
 	return 0;
 }
 
-void tokenTypeStr(char* arr){
-// memset(arr, )
-}
 
