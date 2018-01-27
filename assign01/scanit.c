@@ -9,8 +9,8 @@ typedef enum parseMode { P_NONE, P_FLOAT, P_INT,
 						 P_OPERATOR } ParseMode;
 
 const char * parseModeStr(ParseMode p) {
-	static char *parseModes[] = {"NONE", "Float", "Int", "Identifier", 
-								 "_", "String", "Operator"};
+	static char *parseModes[] = {"NONE", "float", "integer", "identifier", 
+								 "_", "string", "operator"};
 
 	return parseModes[p];
 }
@@ -70,7 +70,7 @@ int main(void){
 			c = lineBuf[i];
 			
 			if (c == '\n') continue;	
-			// fprintf(stderr, "%c", c);
+			
 			if (!isOperator(c) && !isIdentifier(c) && 
 			    c != '"' && c != ' ' && c != '\0' && c != '\\' &&
 				c != ';' &&
@@ -87,9 +87,9 @@ int main(void){
 			
 			if (currMode == P_NONE) {
 				if (isdigit(c)) {
+					tokenArr[tokenIndex++] = c;
 					currMode = P_INT;
-				}
-				if (isIdentifier(c)) {
+				} else if (isIdentifier(c)) {
 					tokenArr[tokenIndex++] = c;
 					currMode = P_IDENTIFIER;
 				} else if (isOperator(c)) {
@@ -108,6 +108,7 @@ int main(void){
 					currMode = P_NONE;
 					memset(tokenArr, 0, sizeof(tokenArr));
 					tokenIndex = 0;
+					i--;
 				}
 			} 
 			else if (currMode == P_OPERATOR) {
@@ -121,11 +122,12 @@ int main(void){
 					currMode = P_NONE;
 					memset(tokenArr, 0, sizeof(tokenArr));
 					tokenIndex = 0;
+					i--;
 				}
 			}
 			else if (currMode == P_STRING) {
 				if (c == '\\') {
-					i++;
+					tokenArr[tokenIndex++] = lineBuf[++i];
 				}
 				else if (c == '"') {
 					fprintf(stderr, format, lineIndex, 
@@ -150,11 +152,12 @@ int main(void){
 					currMode = P_NONE;
 					memset(tokenArr, 0, sizeof(tokenArr));
 					tokenIndex = 0;
+					i--;
 				} 
 			}
 			else if (currMode == P_FLOAT){
 				bool secondDot = c == '.' && 
-									findChar(tokenArr, tokenIndex, '.');
+								findChar(tokenArr, tokenIndex, '.');
 				if (isdigit(c)) {
 					tokenArr[tokenIndex++] = c;
 				} else if(secondDot){
@@ -173,20 +176,13 @@ int main(void){
 				}
 			}
 			else {
-				if (c == ' ' || c == '\n') {
-					fprintf(stderr, format, lineIndex, 
-							parseModeStr(currMode),tokenArr);
-					currMode = P_NONE;
-					memset(tokenArr, 0, sizeof(tokenArr));
-					tokenIndex = 0;
-				}
-				else {
-					tokenArr[tokenIndex++] = c;
-				}
+				// 	
 			}
 		}
 		
-		// free(lineBuf);
+		memset(lineBuf, 0, lineSize);	
+		free(lineBuf);
+		lineBuf = NULL;
 		lineIndex++;		
 	}
 	
