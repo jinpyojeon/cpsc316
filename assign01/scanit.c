@@ -1,3 +1,7 @@
+// Name: Jin Pyo Jeon
+// CPSC 316
+// Assign 01
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -19,7 +23,7 @@ bool isOperator(char c) {
 	
 	char operators[17] = {'&', '=', '!', ':', ',',
 						'.', '>', '<', '[', ']', 
-						'(', ')', '+', '_', '/', 
+						'(', ')', '+', '-', '/', 
 						'*', ';'};
 	
 	int i = 0;
@@ -48,7 +52,7 @@ bool findChar(char * tokenArr, size_t tokenSize, char c){
 
 
 const char * format = "%d: %s \'%s\' found\n";
-const char * errorFormat = "%d: unknown character %c\n";
+const char * errorFormat = "%d: unknown character 0x%x\n";
 
 int main(void){
 	char c;
