@@ -13,6 +13,7 @@
 /* Include files and global variables go here */
 
 #include <stdio.h>
+#include <string.h>
 #include "msg.h"
 
 int cLine = 1;
@@ -27,16 +28,17 @@ KEYWORDS		(?i:ARRAY)|(?i:BEGIN)|(?i:BOOL)|(?i:ELSE)|(?i:ELIF)|(?i:END)|(?i:FALSE
 IDENTIFIER			([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*
 SIMPLE_OPERATOR		&|=|!|:|,|"."|>|<|"["|"]"|"("|")"|"+"|-|"/"|"*"|;
 COMPOUND_OPERATOR	&&|"||"|>=|<=|==|!=|".."
+RANGE_OPERATOR		{INTEGER}".."{INTEGER}
 OPERATOR			{SIMPLE_OPERATOR}|{COMPOUND_OPERATOR}
 INTEGER				[0-9]+
 FLOAT				{INTEGER}*({INTEGER}"."|"."{INTEGER}){INTEGER}*
-STRING				\".*\"
-BAD_STRING			\""\n"
+STRING				\"[^"\n]*\"
+BAD_STRING			\"([^"]|\n)*\n[^"]*
 
 %%
 				/* Local variables go here */
 
-"/*"([^*][^/]|"\n")*"*/"		{
+"/*"([^/]|"*"[^*/]*"/"|\n)*"*/"		{
 				cLine += countNewLine(yytext);
 				}
 [ \t\f]+		{}
@@ -45,6 +47,7 @@ BAD_STRING			\""\n"
 				}
 {BAD_STRING}	{ 
 				fprintf(stderr, message[mnIllegalString], cLine);
+				yyterminate();
 				}
 {STRING}		{
 				fprintf(stderr, message[mnTokenFound], cLine, "String", yytext);
@@ -55,14 +58,24 @@ BAD_STRING			\""\n"
 {IDENTIFIER}	{
 				fprintf(stderr, message[mnTokenFound], cLine, "Identifier", yytext);
 				}
-{FLOAT}|".."	{
-				
+{RANGE_OPERATOR}	{
+				int i = 0;
+				char firstNum[yyleng];
+				for (i = 0; i < yyleng; i++) {
+					if (yytext[i] == '.') {
+						strncpy(firstNum,  yytext, i);
+						yyless(i);
+						break;
+					}
 				}
-{OPERATOR}	    {
-				fprintf(stderr, message[mnTokenFound], cLine, "Operator", yytext);
+				firstNum[i] = '\0';
+				fprintf(stderr, message[mnTokenFound], cLine, "Integer", firstNum);
 				}
 {FLOAT}			{
 				fprintf(stderr, message[mnTokenFound], cLine, "Float", yytext);
+				}	
+{OPERATOR}	    {
+				fprintf(stderr, message[mnTokenFound], cLine, "Operator", yytext);
 				}
 {INTEGER}		{
 				fprintf(stderr, message[mnTokenFound], cLine, "Integer", yytext);
