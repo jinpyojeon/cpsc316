@@ -1,0 +1,51 @@
+Configfile search: /home/jjeon/.fpc.cfg
+Configfile search: /home3/pyoon/pascal/lib/fpc/etc/fpc.cfg
+Configfile search: /etc/fpc.cfg
+Path "/usr/lib/fpc/3.0.4/units/x86_64-linux/rtl/" not found
+Searching file /lib64/ld-linux-x86-64.so.2... found
+Path "/usr/X11R6/lib64/" not found
+Path "/usr/lib64/" not found
+Compiler: /home3/pyoon/pascal/lib/fpc/3.0.4/ppcx64
+Using executable path: /home3/pyoon/pascal/lib/fpc/3.0.4/
+Using unit path: /home3/pyoon/pascal/lib/fpc/3.0.4/
+Using library path: /usr/lib/x86_64-linux-gnu/
+Using library path: /lib64/
+Using library path: /home3/pyoon/pascal/lib/fpc/3.0.4/
+Using object path: /home3/pyoon/pascal/lib/fpc/3.0.4/
+Searching file primes.pp... found
+(PROGRAM)  Registering new unit SYSTEM
+(PROGRAM)  Load from HELLO (implementation) unit SYSTEM
+(SYSTEM)   Loading unit SYSTEM
+Unitsearch: system.ppu
+Searching file system.ppu... not found
+Searching file SYSTEM.PPU... not found
+Unitsearch: system.pp
+Searching file system.pp... not found
+Searching file SYSTEM.PP... not found
+Unitsearch: system.pas
+Searching file system.pas... not found
+Searching file SYSTEM.PAS... not found
+Unitsearch: /home3/pyoon/pascal/lib/fpc/3.0.4/system.ppu
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/system.ppu... not found
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/SYSTEM.PPU... not found
+Unitsearch: /home3/pyoon/pascal/lib/fpc/3.0.4/system.pp
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/system.pp... not found
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/SYSTEM.PP... not found
+Unitsearch: /home3/pyoon/pascal/lib/fpc/3.0.4/system.pas
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/system.pas... not found
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/SYSTEM.PAS... not found
+Unitsearch: system.pp
+Searching file system.pp... not found
+Searching file SYSTEM.PP... not found
+Unitsearch: system.pas
+Searching file system.pas... not found
+Searching file SYSTEM.PAS... not found
+Unitsearch: /home3/pyoon/pascal/lib/fpc/3.0.4/system.pp
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/system.pp... not found
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/SYSTEM.PP... not found
+Unitsearch: /home3/pyoon/pascal/lib/fpc/3.0.4/system.pas
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/system.pas... not found
+Searching file /home3/pyoon/pascal/lib/fpc/3.0.4/SYSTEM.PAS... not found
+Fatal: Can't find unit system used by Hello
+Fatal: Compilation aborted
+Error: /home3/pyoon/pascal/bin/ppcx64 returned an error exitcode
