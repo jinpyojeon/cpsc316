@@ -11,17 +11,20 @@ var
 	i, k : integer;
 
 begin
-	setlength(primeArr, n + 1);
-	for i:= 1 to n do primeArr[i] := true;
+	setLength(primeArr, n + 1);
+	for i:= 0 to n do 
+		primeArr[i] := true;
 	for i:= 2 to n do 
 	begin
 		if (i * i <= n) then
-			k := 2 * n;
+		begin
+			k := 2 * i;
 			while k <= n do
 			begin
 				primeArr[k] := false;
 				k := k + i;
 			end;
+		end;
 	end;
 	isPrime := primeArr[n];	
 end;
@@ -30,6 +33,7 @@ begin
 	for i:= 2 to 100 do 
 	begin
 		if isPrime(i) then
-			write(i);
+			write(i, ' ');
 	end;
+	writeln();
 end.
