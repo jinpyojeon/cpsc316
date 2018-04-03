@@ -3,6 +3,8 @@
  * *)
 val input_list = [(#"E", 15), (#"T", 12), (#"A", 10), (#"O", 8), (#"R", 7), (#"N", 6), (#"S", 5), (#"U", 5), (#"I", 4), (#"D", 4), (#"M", 3), (#"C", 3), (#"G", 2), (#"K", 2)];
 
+val two_input = [(#"E", 15), (#"T", 12)]
+
 fun huffman nil = nil
   | huffman (l : (char * int) list)  = 
       let
@@ -13,7 +15,6 @@ fun huffman nil = nil
                 Leef (i, ch) => print("(" ^ Char.toString(ch) ^ " : " ^ Int.toString(i) ^ ") ") | 
                 Root (i, _, _) => print("(Root: " ^  Int.toString(i) ^ ") ");
 
-    
         fun get_freq (tree : Tree) = 
             case tree of 
                 Leef (i, _) => i | 
@@ -21,11 +22,6 @@ fun huffman nil = nil
         
         fun is_greater_freq (x, y) = get_freq(x) >= get_freq(y);
         
-        val rec is_same_tree = 
-            fn (Leef(i, ch_l), Leef(j, ch_r)) => i = j andalso ch_l = ch_r 
-            |  (Root(i, ll, lr), Root(j, rl, rr)) => i = j andalso is_same_tree(ll, rl) andalso is_same_tree(lr, rr)
-            |  (_, _) => false;
-
         fun return_smaller (a,b) = if is_greater_freq(a,b) then b else a;
         fun return_bigger(a,b) = if is_greater_freq(a,b) then a else b;
 
@@ -65,10 +61,6 @@ fun huffman nil = nil
                 combined::rest
             end;
         
-        fun remove_from_list (_, nil) = nil 
-          | remove_from_list (t, x::xs) = if is_same_tree(t, x) then remove_from_list(t, xs) 
-                                          else x::remove_from_list(t, xs)
-
         val node_list = map (fn (ch, i) => Leef(i, ch)) l;
         
         val rec huffman_h = 
@@ -94,9 +86,8 @@ fun huffman nil = nil
         val d = huffman_h(node_list);
         val h = pre_traversal(hd(d));
       in
-        (* map (fn x => print_tree x) d *)
-        map (fn (ch, str) => print(" ( " ^ Char.toString(ch) ^ " : " ^ str ^ ") ")) h
-    
+        h 
       end;
 
-huffman input_list
+huffman input_list;
+huffman two_input;
